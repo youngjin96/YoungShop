@@ -1,23 +1,22 @@
-import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useRef } from "react";
+
+import axios from "axios";
 
 import { Typography, Box, TextField, Button } from "@mui/material";
 
 const Auth = () => {
-    const navigate = useNavigate();
-    const [userId, setUserId] = useState("");
-    const [userPassword, setUserPassword] = useState("");
+    const idRef = useRef(null);
+    const passwordRef = useRef(null);
     
-    const onChange = (e) => {
-        if (e.target.id === "userId") {
-            setUserId(e.target.value);
-        } else {
-            setUserPassword(e.target.value);
-        }
-    };
+    const onChangeId = (e) => { idRef.current = e.target.value; };
+
+    const onChangePassword = (e) => { passwordRef.current = e.target.value; }
 
     const onClickLogin = () => {
-        navigate("/");
+        axios.post('http://localhost:5000/users/login', {
+			id: idRef.current,
+			password: passwordRef.current
+		})
     };
 
     return (
@@ -35,9 +34,10 @@ const Auth = () => {
                 YoungShop
             </Typography>
             <TextField
-                id="userId"
+                ref={idRef}
                 label="ID"
                 variant="outlined"
+                onChange={onChangeId}
                 sx={{
                     width: 300,
                     mt: 10,
@@ -45,28 +45,19 @@ const Auth = () => {
                     "& .MuiOutlinedInput-root.Mui-focused": { "& > fieldset": { borderColor: "black" } },
                     "& .MuiOutlinedInput-root:hover": { "& > fieldset": { borderColor: "black" } }
                 }}
-                onChange={onChange}
             />
             <TextField
-                id="userPassword"
+                ref={passwordRef}
                 label="Password"
                 type="password"
                 variant="outlined"
+                onChange={onChangePassword}
                 sx={{
                     width: 300,
                     mt: 2,
                     "& .MuiOutlinedInput-root": { "& > fieldset": { borderColor: "#d3d3d3" } },
                     "& .MuiOutlinedInput-root.Mui-focused": { "& > fieldset": { borderColor: "black" } },
                     "& .MuiOutlinedInput-root:hover": { "& > fieldset": { borderColor: "black" } }
-                }}
-                
-                onKeyUp={(e) => {
-                    let searchQuery = e.target.value.toLowerCase();
-                    setTimeout(() => {
-                      if (searchQuery === e.target.value.toLowerCase()) {
-                        setUserId(searchQuery);
-                      }
-                    }, 400);
                 }}
             />
             <Button
